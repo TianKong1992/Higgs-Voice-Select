@@ -93,15 +93,15 @@ class HiggsVoiceSelector:
     ]
 
     音效映射 = {
-        "咳嗽": "<|sfx:cough|>",
-        "笑": "<|sfx:laughter|>",
-        "哭": "<|sfx:crying|>",
-        "尖叫": "<|sfx:screaming|>",
-        "打嗝": "<|sfx:burping|>",
-        "哼唱": "<|sfx:humming|>",
-        "叹气": "<|sfx:sigh|>",
-        "抽鼻子": "<|sfx:sniff|>",
-        "打喷嚏": "<|sfx:sneeze|>",
+        "咳嗽": "<|sfx:cough|>Ahem.",
+        "笑": "<|sfx:laughter|>Haha, Hehe.",
+        "哭": "<|sfx:crying|>Boohoo, Sob.",
+        "尖叫": "<|sfx:screaming|>Ahh, Aaah.",
+        "打嗝": "<|sfx:burping|>Burp.",
+        "哼唱": "<|sfx:humming|>Hmm, Mmm.",
+        "叹气": "<|sfx:sigh|>Ahh, Uh.",
+        "抽鼻子": "<|sfx:sniff|>Sff.",
+        "打喷嚏": "<|sfx:sneeze|>Achoo.",
     }
 
     # ==================== 韵律标签（Prosody）10个 ====================
