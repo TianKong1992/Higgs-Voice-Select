@@ -5,7 +5,7 @@ A tag selector for Higgs voice generation (emotion, style, SFX, prosody)
 
 
 class HiggsVoiceSelector:
-    """Higgs 语音标签选择器 - 用户选择中文标签，输出完整格式标签"""
+    """Higgs 语音标签选择器 - 四个下拉框，用户选择中文标签，输出完整格式标签"""
 
     CATEGORY = "prompt/Higgs-Voice"
     FUNCTION = "generate_higgs_tags"
@@ -131,92 +131,40 @@ class HiggsVoiceSelector:
     }
 
     @classmethod
-    def VALIDATE_INPUTS(cls, **kwargs):
-        """验证多选输入的有效性"""
-        validations = [
-            (kwargs.get("选择情感", []), cls.情感选项, "选择情感"),
-            (kwargs.get("选择风格", []), cls.风格选项, "选择风格"),
-            (kwargs.get("选择音效", []), cls.音效选项, "选择音效"),
-            (kwargs.get("选择韵律", []), cls.韵律选项, "选择韵律"),
-        ]
-
-        for value, valid_options, name in validations:
-            # 处理多选列表
-            items = cls._normalize_list(value)
-            for item in items:
-                if item not in valid_options:
-                    return f"{name} '{item}' 不在有效选项中"
-        return True
-
-    @classmethod
     def INPUT_TYPES(cls):
         return {
             "required": {
-                "选择情感": (cls.情感选项, {"default": ["——"], "multi_select": True}),
-                "选择风格": (cls.风格选项, {"default": ["——"], "multi_select": True}),
-                "选择音效": (cls.音效选项, {"default": ["——"], "multi_select": True}),
-                "选择韵律": (cls.韵律选项, {"default": ["——"], "multi_select": True}),
+                "情感标签": (cls.情感选项, {"default": "——"}),
+                "风格标签": (cls.风格选项, {"default": "——"}),
+                "音效标签": (cls.音效选项, {"default": "——"}),
+                "韵律标签": (cls.韵律选项, {"default": "——"}),
             }
         }
 
-    @staticmethod
-    def _normalize_list(value):
-        """将各种输入格式统一为 Python 列表"""
-        if value is None:
-            return ["——"]
-        if isinstance(value, list):
-            return [str(v).strip() for v in value if v is not None and str(v).strip() != ""] or ["——"]
-        if isinstance(value, str):
-            # 处理字符串化的列表，如 "['item1', 'item2']"
-            if value.startswith("[") and value.endswith("]"):
-                try:
-                    import ast
-                    parsed = ast.literal_eval(value)
-                    if isinstance(parsed, list):
-                        cleaned = [str(v).strip() for v in parsed if v is not None and str(v).strip() != ""]
-                        return cleaned if cleaned else ["——"]
-                except (ValueError, SyntaxError):
-                    pass
-            cleaned = value.strip()
-            return [cleaned] if cleaned else ["——"]
-        return [str(value).strip()]
-
-    def generate_higgs_tags(self, 选择情感, 选择风格, 选择音效, 选择韵律):
+    def generate_higgs_tags(self, 情感标签, 风格标签, 音效标签, 韵律标签):
         """生成 Higgs 语音标签"""
-        # 统一为列表格式
-        情感列表 = self._normalize_list(选择情感)
-        风格列表 = self._normalize_list(选择风格)
-        音效列表 = self._normalize_list(选择音效)
-        韵律列表 = self._normalize_list(选择韵律)
-
-        # 收集所有选中的标签
         result_tags = []
 
-        for item in 情感列表:
-            if item != "——":
-                tag = self.情感映射.get(item, "")
-                if tag:
-                    result_tags.append(tag)
+        if 情感标签 and 情感标签 != "——":
+            tag = self.情感映射.get(情感标签, "")
+            if tag:
+                result_tags.append(tag)
 
-        for item in 风格列表:
-            if item != "——":
-                tag = self.风格映射.get(item, "")
-                if tag:
-                    result_tags.append(tag)
+        if 风格标签 and 风格标签 != "——":
+            tag = self.风格映射.get(风格标签, "")
+            if tag:
+                result_tags.append(tag)
 
-        for item in 音效列表:
-            if item != "——":
-                tag = self.音效映射.get(item, "")
-                if tag:
-                    result_tags.append(tag)
+        if 音效标签 and 音效标签 != "——":
+            tag = self.音效映射.get(音效标签, "")
+            if tag:
+                result_tags.append(tag)
 
-        for item in 韵律列表:
-            if item != "——":
-                tag = self.韵律映射.get(item, "")
-                if tag:
-                    result_tags.append(tag)
+        if 韵律标签 and 韵律标签 != "——":
+            tag = self.韵律映射.get(韵律标签, "")
+            if tag:
+                result_tags.append(tag)
 
-        # 用逗号拼接所有标签
         output = ", ".join(result_tags)
         return (output,)
 
