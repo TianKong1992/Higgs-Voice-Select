@@ -3,14 +3,16 @@ Higgs Voice Selector - ComfyUI Custom Node
 A tag selector for Higgs voice generation (emotion, style, SFX, prosody)
 """
 
+import re
+
 
 class HiggsVoiceSelector:
     """Higgs 语音标签选择器 - 四个下拉框，用户选择中文标签，输出完整格式标签"""
 
     CATEGORY = "prompt/Higgs-Voice"
     FUNCTION = "generate_higgs_tags"
-    RETURN_TYPES = ("STRING",)
-    RETURN_NAMES = ("标签输出",)
+    RETURN_TYPES = ("STRING", "STRING", "STRING")
+    RETURN_NAMES = ("标签输出", "导出格式", "替换结果")
 
     # ==================== 情感标签（Emotion）21个 ====================
     情感选项 = [
@@ -130,19 +132,78 @@ class HiggsVoiceSelector:
         "表现力平缓": "<|prosody:expressive_low|>",
     }
 
+    # ==================== 全量映射（合并四类，用于 [标签] 替换）====================
+    @classmethod
+    def _全量映射(cls):
+        """合并情感+风格+音效+韵律的全部映射"""
+        result = {}
+        result.update(cls.情感映射)
+        result.update(cls.风格映射)
+        result.update(cls.音效映射)
+        result.update(cls.韵律映射)
+        return result
+
     @classmethod
     def INPUT_TYPES(cls):
+        # 合并全部映射，用于 [标签] 替换
         return {
             "required": {
                 "情感标签": (cls.情感选项, {"default": "——"}),
                 "风格标签": (cls.风格选项, {"default": "——"}),
                 "音效标签": (cls.音效选项, {"default": "——"}),
                 "韵律标签": (cls.韵律选项, {"default": "——"}),
+            },
+            "optional": {
+                "输入文本": ("STRING", {
+                    "default": "",
+                    "multiline": True,
+                    "placeholder": "输入含 [标签] 的文本，例如: [咳嗽]你好[满足]"
+                }),
             }
         }
 
-    def generate_higgs_tags(self, 情感标签, 风格标签, 音效标签, 韵律标签):
-        """生成 Higgs 语音标签"""
+    @classmethod
+    def _build_export_mapping(cls):
+        """构建所有标签的完整映射导出格式"""
+        lines = []
+        lines.append("=" * 50)
+        lines.append("Higgs 语音标签完整映射表 (共43个)")
+        lines.append("=" * 50)
+
+        # 情感标签
+        lines.append("")
+        lines.append("【一、情感标签 Emotion】(21个)")
+        lines.append("-" * 40)
+        for cn, tag in cls.情感映射.items():
+            lines.append(f"  {cn}  →  {tag}")
+
+        # 风格标签
+        lines.append("")
+        lines.append("【二、风格标签 Style】(3个)")
+        lines.append("-" * 40)
+        for cn, tag in cls.风格映射.items():
+            lines.append(f"  {cn}  →  {tag}")
+
+        # 音效标签
+        lines.append("")
+        lines.append("【三、音效标签 SFX】(9个)")
+        lines.append("-" * 40)
+        for cn, tag in cls.音效映射.items():
+            lines.append(f"  {cn}  →  {tag}")
+
+        # 韵律标签
+        lines.append("")
+        lines.append("【四、韵律标签 Prosody】(10个)")
+        lines.append("-" * 40)
+        for cn, tag in cls.韵律映射.items():
+            lines.append(f"  {cn}  →  {tag}")
+
+        lines.append("")
+        lines.append("=" * 50)
+        return "\n".join(lines)
+
+    def generate_higgs_tags(self, 情感标签, 风格标签, 音效标签, 韵律标签, 输入文本=""):
+        """生成 Higgs 语音标签，同时支持 [标签] 文本替换"""
         result_tags = []
 
         if 情感标签 and 情感标签 != "——":
@@ -166,7 +227,25 @@ class HiggsVoiceSelector:
                 result_tags.append(tag)
 
         output = ", ".join(result_tags)
-        return (output,)
+        export_mapping = self._build_export_mapping()
+
+        # [标签] 文本替换
+        替换结果 = self._替换标签(输入文本)
+
+        return (output, export_mapping, 替换结果)
+
+    @classmethod
+    def _替换标签(cls, text):
+        """将文本中所有 [中文标签] 替换为对应格式标签，未匹配的删除"""
+        if not text:
+            return ""
+        全量 = cls._全量映射()
+
+        def _替换匹配(match):
+            label = match.group(1)
+            return 全量.get(label, "")  # 找不到映射则替换为空
+
+        return re.sub(r"\[([^\]]+)\]", _替换匹配, text)
 
 
 # 节点注册
