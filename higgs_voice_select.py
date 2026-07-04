@@ -176,40 +176,14 @@ class HiggsVoiceSelector:
     def _build_export_mapping(cls):
         """构建所有标签的完整映射导出格式"""
         lines = []
-        lines.append("=" * 50)
-        lines.append("Higgs 语音标签完整映射表 (共48个)")
-        lines.append("=" * 50)
-
-        # 情感标签
-        lines.append("")
-        lines.append("【一、情感标签 Emotion】(21个)")
-        lines.append("-" * 40)
         for cn, tag in cls.情感映射.items():
-            lines.append(f"  {cn}  →  {tag}")
-
-        # 风格标签
-        lines.append("")
-        lines.append("【二、风格标签 Style】(3个)")
-        lines.append("-" * 40)
+            lines.append(f"{cn} → {tag}")
         for cn, tag in cls.风格映射.items():
-            lines.append(f"  {cn}  →  {tag}")
-
-        # 音效标签
-        lines.append("")
-        lines.append("【三、音效标签 SFX】(14个)")
-        lines.append("-" * 40)
+            lines.append(f"{cn} → {tag}")
         for cn, tag in cls.音效映射.items():
-            lines.append(f"  {cn}  →  {tag}")
-
-        # 韵律标签
-        lines.append("")
-        lines.append("【四、韵律标签 Prosody】(10个)")
-        lines.append("-" * 40)
+            lines.append(f"{cn} → {tag}")
         for cn, tag in cls.韵律映射.items():
-            lines.append(f"  {cn}  →  {tag}")
-
-        lines.append("")
-        lines.append("=" * 50)
+            lines.append(f"{cn} → {tag}")
         return "\n".join(lines)
 
     def generate_higgs_tags(self, 情感标签, 风格标签, 音效标签, 韵律标签, 输入文本=""):
