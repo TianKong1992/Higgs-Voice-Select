@@ -78,28 +78,38 @@ class HiggsVoiceSelector:
         "低语/耳语": "<|style:whispering|>",
     }
 
-    # ==================== 音效标签（SFX）9个 ====================
+    # ==================== 音效标签（SFX）14个（多拟声词拆分） ====================
     音效选项 = [
         "——",
         "咳嗽",
-        "笑",
-        "哭",
-        "尖叫",
+        "笑哈哈",
+        "笑呵呵",
+        "哭呜呜",
+        "哭抽泣",
+        "尖叫啊",
+        "尖叫啊啊",
         "打嗝",
-        "哼唱",
-        "叹气",
+        "哼唱哼",
+        "哼唱嗯",
+        "叹气啊",
+        "叹气呃",
         "抽鼻子",
         "打喷嚏",
     ]
 
     音效映射 = {
         "咳嗽": "<|sfx:cough|>Ahem.",
-        "笑": "<|sfx:laughter|>Haha, Hehe.",
-        "哭": "<|sfx:crying|>Boohoo, Sob.",
-        "尖叫": "<|sfx:screaming|>Ahh, Aaah.",
+        "笑哈哈": "<|sfx:laughter|>Haha.",
+        "笑呵呵": "<|sfx:laughter|>Hehe.",
+        "哭呜呜": "<|sfx:crying|>Boohoo.",
+        "哭抽泣": "<|sfx:crying|>Sob.",
+        "尖叫啊": "<|sfx:screaming|>Ahh.",
+        "尖叫啊啊": "<|sfx:screaming|>Aaah.",
         "打嗝": "<|sfx:burping|>Burp.",
-        "哼唱": "<|sfx:humming|>Hmm, Mmm.",
-        "叹气": "<|sfx:sigh|>Ahh, Uh.",
+        "哼唱哼": "<|sfx:humming|>Hmm.",
+        "哼唱嗯": "<|sfx:humming|>Mmm.",
+        "叹气啊": "<|sfx:sigh|>Ahh.",
+        "叹气呃": "<|sfx:sigh|>Uh.",
         "抽鼻子": "<|sfx:sniff|>Sff.",
         "打喷嚏": "<|sfx:sneeze|>Achoo.",
     }
@@ -167,7 +177,7 @@ class HiggsVoiceSelector:
         """构建所有标签的完整映射导出格式"""
         lines = []
         lines.append("=" * 50)
-        lines.append("Higgs 语音标签完整映射表 (共43个)")
+        lines.append("Higgs 语音标签完整映射表 (共48个)")
         lines.append("=" * 50)
 
         # 情感标签
@@ -186,7 +196,7 @@ class HiggsVoiceSelector:
 
         # 音效标签
         lines.append("")
-        lines.append("【三、音效标签 SFX】(9个)")
+        lines.append("【三、音效标签 SFX】(14个)")
         lines.append("-" * 40)
         for cn, tag in cls.音效映射.items():
             lines.append(f"  {cn}  →  {tag}")
